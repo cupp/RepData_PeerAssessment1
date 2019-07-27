@@ -7,7 +7,8 @@ output:
 
 
 ## Loading and preprocessing the data
-```{r message=FALSE}
+
+```r
 library(lubridate)
 library(ggplot2)
 library(plyr)
@@ -16,7 +17,8 @@ activity$date <- as_date(activity$date)
 ```
 
 ## What is mean total number of steps taken per day?
-```{r}
+
+```r
 dropNA <- subset(activity, !is.na(activity$steps))
 daily <- ddply(dropNA, .(date), summarize, total_steps=sum(steps))
 meanSteps <- mean(daily$total_steps)
@@ -32,9 +34,12 @@ g <- g + ggtitle("Daily Steps",
 g + xlab("steps")
 ```
 
+![](PA1_template_files/figure-html/unnamed-chunk-2-1.png)<!-- -->
+
 
 ## What is the average daily activity pattern?
-```{r}
+
+```r
 dropNA <- subset(activity, !is.na(activity$steps))
 byInterval <- ddply(dropNA, .(interval), summarize, mean_steps=mean(steps))
 m <- max(byInterval$mean_steps)
@@ -55,10 +60,13 @@ g + scale_x_continuous(breaks=c(0,500,1000,1500,2000),
                        labels=c("00:00","05:00","10:00","15:00","20:00"))
 ```
 
+![](PA1_template_files/figure-html/unnamed-chunk-3-1.png)<!-- -->
+
 
 ## Imputing missing values
 
-```{r}
+
+```r
 naCount <- sum(is.na(activity$steps))
 imputed <- activity
 i <- 1
@@ -84,14 +92,17 @@ g <- g + ggtitle("Daily Steps (with imputed values)",
 g + xlab("steps")
 ```
 
-The data set contains `r naCount` missing values in the `steps` variable. Imputing the missing 
+![](PA1_template_files/figure-html/unnamed-chunk-4-1.png)<!-- -->
+
+The data set contains 2304 missing values in the `steps` variable. Imputing the missing 
 values with the mean step value of the corresponding time interval results in a change to the 
 distribution of values in the histogram but little change in the mean and median values of total
 steps per day.
 
 ## Are there differences in activity patterns between weekdays and weekends?
 
-```{r}
+
+```r
 imputed$dayType <- ifelse(weekdays(imputed$date) %in% c("Saturday", "Sunday"), 
          "weekend", "weekday")
 imputed$dayType <- as.factor(imputed$dayType)
@@ -105,3 +116,5 @@ g <- g + scale_x_continuous(breaks=c(0,500,1000,1500,2000),
                        labels=c("00:00","05:00","10:00","15:00","20:00"))
 g + facet_wrap(vars(dayType))
 ```
+
+![](PA1_template_files/figure-html/unnamed-chunk-5-1.png)<!-- -->
